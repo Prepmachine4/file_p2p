@@ -1,4 +1,3 @@
-
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QApplication,QMainWindow,QVBoxLayout
 import sys
@@ -21,30 +20,31 @@ class Ui_Form(object):
         self.hostlabel.setGeometry(QtCore.QRect(20, 16, 72, 30))
         self.hostlabel.setObjectName("hostlabel")
         self.hostEdit = QtWidgets.QLineEdit(Form)
-        self.hostEdit.setGeometry(QtCore.QRect(50, 20, 181, 21))
+        self.hostEdit.setGeometry(QtCore.QRect(60, 20, 181, 21))
         self.hostEdit.setObjectName("hostEdit")
 
         self.label = QtWidgets.QLabel(Form)
         self.label.setGeometry(QtCore.QRect(250, 16, 72, 30))
         self.label.setObjectName("label")
         self.nameEdit = QtWidgets.QLineEdit(Form)
-        self.nameEdit.setGeometry(QtCore.QRect(290, 20, 181, 21))
+        self.nameEdit.setGeometry(QtCore.QRect(305, 20, 181, 21))
         self.nameEdit.setObjectName("nameEdit")
 
         self.passwdLabel = QtWidgets.QLabel(Form)
         self.passwdLabel.setGeometry(QtCore.QRect(490, 16, 72, 30))
         self.passwdLabel.setObjectName("passwdLabel")
         self.passwdEdit = QtWidgets.QLineEdit(Form)
-        self.passwdEdit.setGeometry(QtCore.QRect(520, 20, 181, 21))
+        self.passwdEdit.setGeometry(QtCore.QRect(535, 20, 181, 21))
         self.passwdEdit.setEchoMode(QtWidgets.QLineEdit.Password)
         self.passwdEdit.setObjectName("passwdEdit")
-        self.registerRadio = QtWidgets.QRadioButton(Form)
-        self.registerRadio.setGeometry(QtCore.QRect(820, 22, 91, 25))
-        self.registerRadio.setChecked(True)
-        self.registerRadio.setObjectName("registerRadio")
-        self.visitorRadio = QtWidgets.QRadioButton(Form)
-        self.visitorRadio.setGeometry(QtCore.QRect(890, 22,91, 25))
-        self.visitorRadio.setObjectName("visitorRadio")
+
+        # self.registerRadio = QtWidgets.QRadioButton(Form)
+        # self.registerRadio.setGeometry(QtCore.QRect(820, 22, 91, 25))
+        # self.registerRadio.setChecked(True)
+        # self.registerRadio.setObjectName("registerRadio")
+        # self.visitorRadio = QtWidgets.QRadioButton(Form)
+        # self.visitorRadio.setGeometry(QtCore.QRect(890, 22,91, 25))
+        # self.visitorRadio.setObjectName("visitorRadio")
 
         self.Local_label = QtWidgets.QLabel(Form)
         self.Local_label.setObjectName("Local_label")
@@ -92,7 +92,7 @@ class Ui_Form(object):
         self.logEdit.isReadOnly()
 
         self.downlabel = QtWidgets.QLabel(Form)
-        self.downlabel.setGeometry(QtCore.QRect(20, 832, 72, 30))
+        self.downlabel.setGeometry(QtCore.QRect(20, 832, 90, 30))
         self.downlabel.setObjectName("downlabel")
 
         self.widget = QtWidgets.QWidget(Form)
@@ -130,17 +130,17 @@ class Ui_Form(object):
 
 
         _translate = QtCore.QCoreApplication.translate
-        Form.setWindowTitle(_translate("Form", "FTP本机客户端"))
-        self.Local_label.setText(_translate("Form", "本地站点"))
-        self.Remote_label.setText(_translate("Form", "FTP服务器"))
+        Form.setWindowTitle(_translate("Form", "局域网P2P文件传输"))
+        self.Local_label.setText(_translate("Form", "本机"))
+        self.Remote_label.setText(_translate("Form", "远程服务器"))
         self.downlabel.setText(_translate("Form", "下载/上传"))
         # self.Local_Return.setText(_translate("Form", "←"))
         # self.Remote_Return.setText(_translate("Form", "←"))
         self.hostlabel.setText(_translate("Form", "主机"))
         self.label.setText(_translate("Form", "用户名"))
         self.passwdLabel.setText(_translate("Form", "密码"))
-        self.registerRadio.setText(_translate("Form", "登录"))
-        self.visitorRadio.setText(_translate("Form", "匿名访问"))
+        # self.registerRadio.setText(_translate("Form", "登录"))
+        # self.visitorRadio.setText(_translate("Form", "匿名访问"))
         self.Remote_Filelist.headerItem().setText(0, _translate("Form", "文件名"))
         self.Remote_Filelist.headerItem().setText(1, _translate("Form", "大小"))
         self.Remote_Filelist.headerItem().setText(2, _translate("Form", "修改日期"))

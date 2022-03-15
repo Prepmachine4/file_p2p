@@ -7,8 +7,6 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import (QApplication, QInputDialog, QLineEdit,
                              QMainWindow, QMessageBox, QTreeWidgetItem,
                              QWidget)
-from win32gui import *
-
 from dialog import *
 from ClientGui import Ui_Form
 from utils import fileProperty
@@ -111,8 +109,8 @@ class MyMainGui(QWidget,Ui_Form):
         self.Remote_Filelist.setContextMenuPolicy(Qt.CustomContextMenu)
         self.Remote_Filelist.customContextMenuRequested.connect(self.remote_right_menu)
 
-        self.registerRadio.clicked.connect(self.register)
-        self.visitorRadio.clicked.connect(self.visitor)
+        # self.registerRadio.clicked.connect(self.register)
+        # self.visitorRadio.clicked.connect(self.visitor)
 
         # completer for path edit
         Remote_completer = QCompleter()
