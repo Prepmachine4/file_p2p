@@ -1,26 +1,51 @@
+# 封装ftp客户端操作
 import socket, sys, re
 from logger import put_text
 import time
+
 DEBUG = True
 MAX_BYTES = 1024
 
 logs = ""
 
 
+def client(hostName, port):
 
-def client(hostName,port):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    ip_address = socket.gethostbyname(hostName)
+    ip_address = socket.gethostbyname(hostName if hostName else '192.168.43.197')
     s.connect((ip_address, port))
 
     response = s.recv(MAX_BYTES)
     if DEBUG:
         put_text(response)
     if response.decode()[:3] != "220":
-        put_text("连接失败，请重试。",color="red")
-        raise("连接失败，请重试。")
-    put_text("连接到ftp服务器成功。",color="green")
+        put_text("连接失败，请重试。", color="red")
+        raise ("连接失败，请重试。")
+    put_text("连接到ftp服务器成功。", color="green")
     return s
+
+
+def ftp_login(s, user, pwd):
+    user=user if user else 'test'
+    pwd =pwd if pwd else '123456'
+    userParam = b"USER " + bytes(user.encode("utf-8")) + b"\n"
+    pwdParam = b"PASS " + bytes(pwd.encode("utf-8")) + b"\n"
+
+    s.send(userParam)
+    response = s.recv(MAX_BYTES)
+    if DEBUG:
+        put_text(response)
+    s.send(pwdParam)
+    res = s.recv(MAX_BYTES)
+    if DEBUG:
+        put_text(res)
+    if str(res[:3].decode("utf-8")) == "230":
+        put_text("登陆成功。", color="green")
+        put_text("欢迎，{}".format(user), color="green")
+        return True
+    else:
+        put_text("登陆失败，请重试。", color="red")
+        raise ("登陆失败，请重试。")
 
 
 def listDir(s):
@@ -71,12 +96,12 @@ def changeWorkingDir(s, directory):
         response = s.recv(MAX_BYTES)
         if DEBUG:
             put_text(response)
-        put_text("回复：{}".format(response.decode("utf-8")[3:len(response)]),color="yellow")
+        put_text("回复：{}".format(response.decode("utf-8")[3:len(response)]), color="yellow")
 
 
 def makeDir(s, directory):
     s.send(b"MKD " + bytes(directory.encode("utf-8")) + b"\r\n")
-    put_text("输入指令 {}".format(str(b"MKD " + bytes(directory.encode("utf-8")) + b"\r\n")),color="blue")
+    put_text("输入指令 {}".format(str(b"MKD " + bytes(directory.encode("utf-8")) + b"\r\n")), color="blue")
     response = s.recv(MAX_BYTES)
     if DEBUG:
         put_text(response)
@@ -86,12 +111,12 @@ def makeDir(s, directory):
         response = s.recv(MAX_BYTES)
         if DEBUG:
             put_text(response)
-        put_text("回复：{}".format(response.decode("utf-8")[3:len(response)]),color="yellow")
+        put_text("回复：{}".format(response.decode("utf-8")[3:len(response)]), color="yellow")
 
 
 def removeDir(s, directory):
     s.send(b"RMD " + bytes(directory.encode("utf-8")) + b"\r\n")
-    put_text("输入指令 {}".format(str(b"RMD " + bytes(directory.encode("utf-8")) + b"\r\n")),color="blue")
+    put_text("输入指令 {}".format(str(b"RMD " + bytes(directory.encode("utf-8")) + b"\r\n")), color="blue")
     response = s.recv(MAX_BYTES)
     if DEBUG:
         put_text(response)
@@ -101,21 +126,21 @@ def removeDir(s, directory):
         response = s.recv(MAX_BYTES)
         if DEBUG:
             put_text(response)
-        put_text("回复：{}".format(response.decode("utf-8")[3:len(response)]),color="yellow")
+        put_text("回复：{}".format(response.decode("utf-8")[3:len(response)]), color="yellow")
 
 
-def getFile(s, file, dstFile,pb):
+def getFile(s, file, dstFile, pb):
     try:
         s.send(b"PASV\r\n")
 
         response = s.recv(MAX_BYTES)
         if DEBUG:
-            put_text(response,"noshow")
+            put_text(response, "noshow")
         while response.decode()[:3] != "227":
             response = s.recv(MAX_BYTES)
             if DEBUG:
-                put_text(response,"noshow")
-            put_text("回复：{}".format(response.decode("utf-8")[3:len(response)]),"noshow")
+                put_text(response, "noshow")
+            put_text("回复：{}".format(response.decode("utf-8")[3:len(response)]), "noshow")
 
         data_response = re.search("\((.*?)\)", response.decode()).group(1)
         data_ip = ".".join(data_response.split(",")[0:4])
@@ -128,14 +153,14 @@ def getFile(s, file, dstFile,pb):
 
         response = s.recv(MAX_BYTES)
         if DEBUG:
-            put_text(response,"noshow")
-        put_text("回复：{}".format(response.decode("utf-8")[3:len(response)]),"noshow")
+            put_text(response, "noshow")
+        put_text("回复：{}".format(response.decode("utf-8")[3:len(response)]), "noshow")
 
         if response.decode()[:3] != "550":
             outputFile = str(dstFile)
 
             output_file = open(outputFile, "wb")
-            put_text("这将花费一段时间","noshow")
+            put_text("这将花费一段时间", "noshow")
             while True:
                 buffer = r.recv(1024)
                 if buffer == b"":
@@ -144,14 +169,15 @@ def getFile(s, file, dstFile,pb):
                 output_file.write(buffer)
             response = s.recv(MAX_BYTES)
             if DEBUG:
-                put_text(response,"noshow")
+                put_text(response, "noshow")
             text = response.decode("utf-8")[4:len(response)]
             if text == "Transfer complete.\r\n":
                 time.sleep(0.1)
                 pb.setValues.emit()
-            put_text("回复：{}".format(text),"noshow")
+            put_text("回复：{}".format(text), "noshow")
     except Exception as e:
         print(str(e))
+
 
 def getPwd(s):
     s.send(b"PWD\r\n")
@@ -162,23 +188,24 @@ def getPwd(s):
         if DEBUG:
             put_text(response)
         text = str(response.decode("utf-8")[4:len(response)])
-        work = text.split(" ",2)
+        work = text.split(" ", 2)
         pwd = work[0].replace('"', '')
-        put_text("回复：{}".format(pwd),color="yellow")
-        return True,pwd
+        put_text("回复：{}".format(pwd), color="yellow")
+        return True, pwd
     else:
-        return False,"/"
+        return False, "/"
 
-def uploadFile(s, srcfile,dstfile,pb):
+
+def uploadFile(s, srcfile, dstfile, pb):
     s.send(b"PASV\r\n")
 
     response = s.recv(MAX_BYTES)
-    put_text(response,"noshow")
+    put_text(response, "noshow")
     while response.decode()[:3] != "227":
         response = s.recv(MAX_BYTES)
         if DEBUG:
-            put_text(response,"noshow")
-        put_text("回复：{}".format(response.decode("utf-8")[3:len(response)]),"noshow")
+            put_text(response, "noshow")
+        put_text("回复：{}".format(response.decode("utf-8")[3:len(response)]), "noshow")
 
     data_response = re.search("\((.*?)\)", response.decode()).group(1)
     data_ip = ".".join(data_response.split(",")[0:4])
@@ -198,7 +225,7 @@ def uploadFile(s, srcfile,dstfile,pb):
         pb.updateProgress.emit(buffer)
         if buffer == b'':
             break
-    put_text("文件已上传","noshow")
+    put_text("文件已上传", "noshow")
 
 
 def deleteFile(s, file):
@@ -211,7 +238,7 @@ def deleteFile(s, file):
         response = s.recv(MAX_BYTES)
         if DEBUG:
             put_text(response)
-        put_text("回复：{}".format(response.decode("utf-8")[3:len(response)]),color="yellow")
+        put_text("回复：{}".format(response.decode("utf-8")[3:len(response)]), color="yellow")
 
     data_response = re.search("\((.*?)\)", response.decode()).group(1)
     data_ip = ".".join(data_response.split(",")[0:4])
@@ -222,23 +249,3 @@ def deleteFile(s, file):
 
     s.send(b"DELE " + bytes(file.encode("utf-8")) + b"\r\n")
     put_text("文件已删除")
-
-def ftp_login(s,user,pwd):
-    userParam = b"USER " + bytes(user.encode("utf-8")) + b"\n"
-    pwdParam = b"PASS " + bytes(pwd.encode("utf-8")) + b"\n"
-
-    s.send(userParam)
-    response = s.recv(MAX_BYTES)
-    if DEBUG:
-        put_text(response)
-    s.send(pwdParam)
-    res = s.recv(MAX_BYTES)
-    if DEBUG:
-        put_text(res)
-    if str(res[:3].decode("utf-8")) == "230":
-        put_text("登陆成功。",color="green")
-        put_text("欢迎，{}".format(user),color="green")
-        return True
-    else:
-        put_text("登陆失败，请重试。",color="red")
-        raise("登陆失败，请重试。")

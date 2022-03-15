@@ -89,11 +89,11 @@ class UploadProgressWidget(BaseProgressWidget):
         }"""
         self.progressbar.setStyleSheet(style)
 
-class MessageBox(QMessageBox):
-    message_sig = PyQt5.QtCore.pyqtSignal(str)
-    def __init__(self, parent=None):
-        super(MessageBox, self).__init__(parent)
-        self.message_sig.connect(self.inform)
-    
-    def inform(message):
-        self.information(parent, 'Message', message)
+# class MessageBox(QMessageBox):
+#     message_sig = PyQt5.QtCore.pyqtSignal(str)
+#     def __init__(self, parent=None):
+#         super(MessageBox, self).__init__(parent)
+#         self.message_sig.connect(self.inform)
+#
+#     # def inform(self,message):
+#     #     self.information(parent, 'Message', message)

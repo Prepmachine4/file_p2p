@@ -56,7 +56,7 @@ def put_text(objects,arg="nothing",color="no"):
                 logger.window.logEdit.appendHtml(log_new)
 
             time_str = str(datetime.now().strftime("%Y-%m-%d-%H-%M-%S"))
-            with open("log.html",'a',encoding='uft-8') as f:
+            with open("log.html",'a',encoding='utf-8') as f:
                 f.write("[{}][time:{}]:{} <br>".format(types,time_str,str(log_new)))
             f.close()
         except Exception as e:

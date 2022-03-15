@@ -109,8 +109,8 @@ class MyMainGui(QWidget,Ui_Form):
         self.Remote_Filelist.setContextMenuPolicy(Qt.CustomContextMenu)
         self.Remote_Filelist.customContextMenuRequested.connect(self.remote_right_menu)
 
-        # self.registerRadio.clicked.connect(self.register)
-        # self.visitorRadio.clicked.connect(self.visitor)
+        self.registerRadio.clicked.connect(self.register)
+        self.visitorRadio.clicked.connect(self.visitor)
 
         # completer for path edit
         Remote_completer = QCompleter()
@@ -338,6 +338,7 @@ class MyMainGui(QWidget,Ui_Form):
         except Exception as e:
             message = QMessageBox.information(self,'登陆错误','账号密码错误，请重新输入')
             put_text(str(e),color="red")
+
 
 
     def downloadToRemoteFileList(self):
