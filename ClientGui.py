@@ -1,8 +1,10 @@
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QApplication,QMainWindow,QVBoxLayout
+from PyQt5 import QtCore, QtWidgets
 import sys
 from PyQt5.QtGui import QIcon
 import os
+
+from PyQt5.QtWidgets import QMainWindow
+
 if getattr(sys, 'frozen', False):
  cur_path = sys._MEIPASS
 else:
@@ -16,6 +18,10 @@ class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
         Form.resize(1100, 1000)
+
+
+
+
         self.hostlabel = QtWidgets.QLabel(Form)
         self.hostlabel.setGeometry(QtCore.QRect(20, 16, 72, 30))
         self.hostlabel.setObjectName("hostlabel")
@@ -154,6 +160,9 @@ class Ui_Form(object):
         self.Local_Connect.setText(_translate("Form", "连接"))
         # self.Remote_Home.setText(_translate("Form", "Home"))
         # self.Remote_Next.setText(_translate("Form", "→"))
+
+
+
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)

@@ -6,6 +6,8 @@ from concurrent.futures import ThreadPoolExecutor, wait, ALL_COMPLETED
 
 
 class Scanner:
+    ip_list = []
+    all_task = []
 
     @staticmethod
     def scan_tools_v1(host):
@@ -15,6 +17,7 @@ class Scanner:
         conn_result = sk.connect_ex((host, port))
         if conn_result == 0:
             print('服务器{}的{}端口已开放'.format(host, port))
+            Scanner.ip_list.append(host)
         sk.close()
 
     @staticmethod
@@ -26,8 +29,17 @@ class Scanner:
         prefix = Scanner.get_gateways()
         hosts = [prefix[:-1] + str(host) for host in range(1, 255)]
         executor = ThreadPoolExecutor(max_workers=16)
-        all_task = [executor.submit(Scanner.scan_tools_v1, (host)) for host in hosts]
-        wait(all_task, return_when=ALL_COMPLETED)
+        Scanner.all_task = [executor.submit(Scanner.scan_tools_v1, (host)) for host in hosts]
+        wait(Scanner.all_task, return_when=ALL_COMPLETED)
+
+    @staticmethod
+    def get_progress():
+        total = len(Scanner.all_task)
+        finish = 0
+        for ele in Scanner.all_task:
+            if ele.done():
+                finish += 1
+        return 100 if finish == total else int(finish / total)
 
 
 if __name__ == '__main__':

@@ -1,4 +1,6 @@
 import os
+import threading
+
 from PyQt5.QtCore import *
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import (QInputDialog, QLineEdit,
@@ -10,6 +12,7 @@ from utils import fileProperty
 import ftp_client
 from logger import put_text
 from logger import logger
+from scanner import Scanner
 
 import qdarkstyle
 
@@ -683,9 +686,52 @@ class MyMainGui(QWidget, Ui_Form):
             message = QMessageBox.warning(self, '删除失败！', '无法删除当前文件')
 
 
+class ScannerGui(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.initUI()
+
+    def initUI(self):
+        self.listwidget = QListWidget(self)  # 实例化列表控件
+        self.listwidget.doubleClicked.connect(self.choose_ip)
+
+
+        self.pbar = QProgressBar(self)
+        self.pbar.setValue(0)
+
+        self.btn = QPushButton('开始扫描', self)
+        self.btn.clicked.connect(self.doScan)
+
+        vbox = QVBoxLayout()
+        vbox.setContentsMargins(30, 30, 30, 30)
+        vbox.addWidget(self.pbar)
+        vbox.addWidget(self.listwidget)
+        vbox.addWidget(self.btn)
+        self.setGeometry(300, 300, 500, 300)
+        self.setWindowTitle('扫描当前局域网')
+        self.setLayout(vbox)
+        self.show()
+
+    def doScan(self):
+        '''开始扫描局域网'''
+        threading.Thread(target=Scanner.run).run()
+        while True:
+            value = Scanner.get_progress()
+            self.pbar.setValue(value)
+            if value == 100:
+                break
+        self.listwidget.addItems(Scanner.ip_list)  # 添加项目-列表
+
+    def choose_ip(self):
+        ip=self.listwidget.currentItem().text()
+        self.hide()
+        myWin.show()
+        myWin.hostEdit.setText(ip)
+
 app = QApplication(sys.argv)
 myWin = MyMainGui()
 logger.setmyWin(myWin)
 app.setStyleSheet(qdarkstyle.load_stylesheet())
-myWin.show()
+
+sc = ScannerGui()
 sys.exit(app.exec_())
