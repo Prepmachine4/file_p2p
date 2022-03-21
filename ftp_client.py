@@ -26,8 +26,9 @@ def client(hostName, port):
 
 
 def ftp_login(s, user, pwd):
-    user=user if user else 'test'
-    pwd =pwd if pwd else '123456'
+    if DEBUG:
+        user=user if user else 'test'
+        pwd =pwd if pwd else '123456'
     userParam = b"USER " + bytes(user.encode("utf-8")) + b"\n"
     pwdParam = b"PASS " + bytes(pwd.encode("utf-8")) + b"\n"
 
@@ -191,7 +192,7 @@ def getPwd(s):
         work = text.split(" ", 2)
         pwd = work[0].replace('"', '')
         put_text("回复：{}".format(pwd), color="yellow")
-        return True, pwd
+        return True, pwd[:-2]
     else:
         return False, "/"
 
